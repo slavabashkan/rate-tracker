@@ -9,12 +9,12 @@ namespace MarketGatewayService.Controllers;
 [Route("api/[controller]")]
 public class PriceController : Controller
 {
-    private readonly TickerProvider _tickerProvider;
+    private readonly ITickerProvider _tickerProvider;
     private readonly HttpClient _httpClient;
     private readonly string _priceSourceUrlTemplate;
     private readonly ILogger<PriceController> _logger;
 
-    public PriceController(TickerProvider tickerProvider, HttpClient httpClient, IOptions<AppSettings> appSettings, ILogger<PriceController> logger)
+    public PriceController(ITickerProvider tickerProvider, HttpClient httpClient, IOptions<AppSettings> appSettings, ILogger<PriceController> logger)
     {
         _tickerProvider = tickerProvider;
         _httpClient = httpClient;

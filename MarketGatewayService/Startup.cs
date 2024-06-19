@@ -13,7 +13,7 @@ builder.Services.AddLogging();
 builder.Services.Configure<AppSettings>(builder.Configuration.GetSection("AppSettings"));
 builder.Services.AddSingleton<IValidateOptions<AppSettings>, AppSettingsValidation>();
 
-builder.Services.AddSingleton<TickerProvider>(sp =>
+builder.Services.AddSingleton<ITickerProvider>(sp =>
 {
     var appSettings = sp.GetRequiredService<IOptions<AppSettings>>().Value;
     return new TickerProvider(appSettings.TickersStorageFilePath);

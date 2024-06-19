@@ -6,9 +6,9 @@ namespace MarketGatewayService.Controllers;
 [Route("api/[controller]")]
 public class TickersController : Controller
 {
-    private readonly TickerProvider _provider;
+    private readonly ITickerProvider _provider;
 
-    public TickersController(TickerProvider provider)
+    public TickersController(ITickerProvider provider)
     {
         _provider = provider;
     }

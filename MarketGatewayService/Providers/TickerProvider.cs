@@ -3,7 +3,7 @@ using MarketGatewayService.Models;
 
 namespace MarketGatewayService.Providers;
 
-public class TickerProvider
+public class TickerProvider : ITickerProvider
 {
     private readonly IReadOnlyDictionary<string, Ticker> _tickers;
 
