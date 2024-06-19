@@ -1,8 +1,6 @@
 namespace MarketGatewayService.Models;
 
-public record Ticker
-(
+public record Ticker(
     string Name,
     string From,
-    string To
-);
+    string To);

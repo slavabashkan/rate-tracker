@@ -8,7 +8,14 @@ public class AppSettingsValidation : IValidateOptions<AppSettings>
     {
         if (string.IsNullOrEmpty(settings.TickersStorageFilePath))
         {
-            return ValidateOptionsResult.Fail("\'TickersStorageFilePath\' must be provided in configuration.");
+            return ValidateOptionsResult.Fail(
+                $"\'{nameof(settings.TickersStorageFilePath)}\' must be provided in configuration");
+        }
+
+        if (string.IsNullOrEmpty(settings.PriceSourceUrlTemplate))
+        {
+            return ValidateOptionsResult.Fail(
+                $"\'{nameof(settings.PriceSourceUrlTemplate)}\' must be provided in configuration");
         }
 
         return ValidateOptionsResult.Success;

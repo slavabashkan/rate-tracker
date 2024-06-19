@@ -32,5 +32,9 @@ public class TickerProvider
         }
     }
 
-    public IReadOnlyCollection<string> GetAllNames() => _tickers.Keys.ToArray();
+    public IReadOnlyCollection<string> GetAllNames() =>
+        _tickers.Keys.ToArray();
+
+    public Ticker? GetTicker(string name) =>
+        _tickers.GetValueOrDefault(name);
 }
