@@ -1,0 +1,17 @@
+[
+  {
+    "name": "USDTEUR",
+    "from": "USDT",
+    "to": "EUR"
+  },
+  {
+    "name": "DOGEUSD",
+    "from": "DOGE",
+    "to": "USD"
+  },
+  {
+    "name": "BTCUSD",
+    "from": "BTC",
+    "to": "USD"
+  }
+]
