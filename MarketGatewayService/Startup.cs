@@ -1,5 +1,5 @@
 using MarketGatewayService.Configuration;
-using MarketGatewayService.Providers;
+using Common.Providers;
 using Microsoft.Extensions.Options;
 
 var builder = WebApplication.CreateBuilder(args);

@@ -1,7 +1,7 @@
 using System.Text.Json;
-using MarketGatewayService.Models;
+using Common.Models;
 
-namespace MarketGatewayService.Providers;
+namespace Common.Providers;
 
 public class TickerProvider : ITickerProvider
 {

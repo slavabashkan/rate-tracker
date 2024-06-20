@@ -1,6 +1,6 @@
 using MarketGatewayService.Configuration;
 using MarketGatewayService.DTO;
-using MarketGatewayService.Providers;
+using Common.Providers;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 

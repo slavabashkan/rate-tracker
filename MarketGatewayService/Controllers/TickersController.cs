@@ -1,4 +1,4 @@
-using MarketGatewayService.Providers;
+using Common.Providers;
 using Microsoft.AspNetCore.Mvc;
 
 namespace MarketGatewayService.Controllers;

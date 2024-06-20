@@ -1,4 +1,4 @@
-namespace MarketGatewayService.Models;
+namespace Common.Models;
 
 public record Ticker(
     string Name,

@@ -15,6 +15,14 @@
       <Content Update="Resources\AvailableTickers.json">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </Content>
+      <None Include="..\CommonItems\AvailableTickers.json">
+        <Link>Resources/AvailableTickers.json</Link>
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Common\Common.csproj" />
     </ItemGroup>
 
 </Project>

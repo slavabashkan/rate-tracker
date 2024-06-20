@@ -1,6 +1,6 @@
-using MarketGatewayService.Models;
+using Common.Models;
 
-namespace MarketGatewayService.Providers;
+namespace Common.Providers;
 
 public interface ITickerProvider
 {
