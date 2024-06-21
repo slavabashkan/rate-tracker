@@ -16,6 +16,6 @@ public class TickersController : Controller
     [HttpGet(nameof(GetAll))]
     public ActionResult<IReadOnlyCollection<string>> GetAll()
     {
-        return Ok(_provider.GetAllNames());
+        return Ok(_provider.GetAll().Select(t => t.Name));
     }
 }

@@ -2,16 +2,19 @@
   {
     "name": "USDTEUR",
     "from": "USDT",
-    "to": "EUR"
+    "to": "EUR",
+    "subTicker": "COINBASE:USDT-EUR"
   },
   {
     "name": "DOGEUSD",
     "from": "DOGE",
-    "to": "USD"
+    "to": "USD",
+    "subTicker": "COINBASE:DOGE-USD"
   },
   {
     "name": "BTCUSD",
     "from": "BTC",
-    "to": "USD"
+    "to": "USD",
+    "subTicker": "COINBASE:BTC-USD"
   }
 ]

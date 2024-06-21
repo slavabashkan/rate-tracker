@@ -1,0 +1,12 @@
+﻿{
+  "profiles": {
+    "PriceUpdateHandlerService": {
+      "commandName": "Project",
+      "workingDirectory": "bin/Debug/net7.0",
+      "dotnetRunMessages": true,
+      "environmentVariables": {
+        "DOTNET_ENVIRONMENT": "Development"
+      }
+    }
+  }
+}

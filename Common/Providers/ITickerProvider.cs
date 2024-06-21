@@ -4,7 +4,7 @@ namespace Common.Providers;
 
 public interface ITickerProvider
 {
-    IReadOnlyCollection<string> GetAllNames();
+    IReadOnlyCollection<Ticker> GetAll();
 
     Ticker? GetTicker(string name);
 }
