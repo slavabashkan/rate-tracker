@@ -16,7 +16,7 @@ builder.Services.AddSingleton<IValidateOptions<AppSettings>, AppSettingsValidati
 builder.Services.AddSingleton<ITickerProvider>(sp =>
 {
     var appSettings = sp.GetRequiredService<IOptions<AppSettings>>().Value;
-    return new TickerProvider(appSettings.TickersStorageFilePath);
+    return new TickerFileProvider(appSettings.TickersStorageFilePath);
 });
 
 var app = builder.Build();

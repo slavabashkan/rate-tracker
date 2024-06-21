@@ -3,11 +3,11 @@ using Common.Models;
 
 namespace Common.Providers;
 
-public class TickerProvider : ITickerProvider
+public class TickerFileProvider : ITickerProvider
 {
     private readonly IReadOnlyDictionary<string, Ticker> _tickers;
 
-    public TickerProvider(string sourceFilePath)
+    public TickerFileProvider(string sourceFilePath)
     {
         if (!File.Exists(sourceFilePath))
             throw new FileNotFoundException($"Tickers data not found at '{sourceFilePath}'");
@@ -32,8 +32,8 @@ public class TickerProvider : ITickerProvider
         }
     }
 
-    public IReadOnlyCollection<string> GetAllNames() =>
-        _tickers.Keys.ToArray();
+    public IReadOnlyCollection<Ticker> GetAll() =>
+        _tickers.Values.ToArray();
 
     public Ticker? GetTicker(string name) =>
         _tickers.GetValueOrDefault(name);
