@@ -27,6 +27,15 @@ builder.Services.AddSingleton<ITickerProvider>(sp =>
     return new TickerFileProvider(appSettings.TickersStorageFilePath);
 });
 
+builder.Services.AddSingleton<TickerPriceRestService>(sp =>
+{
+    var appSettings = sp.GetRequiredService<IOptions<AppSettings>>().Value;
+    return new TickerPriceRestService(
+        appSettings.PriceSourceUrlTemplate,
+        sp.GetRequiredService<ITickerProvider>(),
+        sp.GetRequiredService<HttpClient>());
+});
+
 builder.Services.AddHostedService<MessageSubscriber>();
 builder.Services.AddSingleton<WebSocketHandler>();
 

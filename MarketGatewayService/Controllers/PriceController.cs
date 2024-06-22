@@ -1,43 +1,32 @@
-using MarketGatewayService.Configuration;
 using MarketGatewayService.DTO;
-using Common.Providers;
+using MarketGatewayService.Services;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Options;
 
 namespace MarketGatewayService.Controllers;
 
 [Route("api/[controller]")]
 public class PriceController : Controller
 {
-    private readonly ITickerProvider _tickerProvider;
-    private readonly HttpClient _httpClient;
-    private readonly string _priceSourceUrlTemplate;
+    private readonly TickerPriceRestService _priceService;
     private readonly ILogger<PriceController> _logger;
 
-    public PriceController(ITickerProvider tickerProvider, HttpClient httpClient, IOptions<AppSettings> appSettings, ILogger<PriceController> logger)
+    public PriceController(TickerPriceRestService priceService, ILogger<PriceController> logger)
     {
-        _tickerProvider = tickerProvider;
-        _httpClient = httpClient;
-        _priceSourceUrlTemplate = appSettings.Value.PriceSourceUrlTemplate;
+        _priceService = priceService;
         _logger = logger;
     }
 
     [HttpGet("{ticker}")]
     public async Task<ActionResult<PriceResponseDto>> GetPrice(string ticker)
     {
-        var tickerObject = _tickerProvider.GetTicker(ticker);
-
-        if (tickerObject == null)
-            return LogErrorAndReturnStatus(404, $"Wrong ticker name ({ticker})");
-
-        var requestUrl = _priceSourceUrlTemplate
-            .Replace("{from}", tickerObject.From)
-            .Replace("{to}", tickerObject.To);
-
         CexIoTickerResponseDto? response;
         try
         {
-            response = await _httpClient.GetFromJsonAsync<CexIoTickerResponseDto>(requestUrl);
+            response = await _priceService.FetchPrice(ticker);
+        }
+        catch (ArgumentException)
+        {
+            return LogErrorAndReturnStatus(404, $"Wrong ticker name ({ticker})");
         }
         catch (HttpRequestException ex)
         {
