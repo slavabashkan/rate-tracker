@@ -13,14 +13,16 @@ namespace PriceUpdateHandlerService;
 public class Worker : BackgroundService
 {
     private readonly ITickerProvider _tickerProvider;
-    //private readonly ISubscriber _subscriber;
+    private readonly ISubscriber _subscriber;
+    private readonly RedisChannel _channel;
     private readonly ILogger<Worker> _logger;
     private readonly IOptions<AppSettings> _appSettings;
 
-    public Worker(ITickerProvider tickerProvider, /*IConnectionMultiplexer redis,*/ ILogger<Worker> logger, IOptions<AppSettings> appSettings)
+    public Worker(ITickerProvider tickerProvider, IConnectionMultiplexer redis, ILogger<Worker> logger, IOptions<AppSettings> appSettings)
     {
         _tickerProvider = tickerProvider;
-        //_subscriber = redis.GetSubscriber();
+        _subscriber = redis.GetSubscriber();
+        _channel = new RedisChannel(appSettings.Value.PriceUpdatesChannel, RedisChannel.PatternMode.Literal);
         _logger = logger;
         _appSettings = appSettings;
     }
@@ -69,22 +71,28 @@ public class Worker : BackgroundService
                 {
                     var lastPrices = GetLastTradePrices(result);
 
-                    var priceUpdates = new List<PriceUpdateDto>();
+                    var priceUpdates = new List<PriceUpdateMessage>();
                     foreach (var price in lastPrices)
                     {
-                        if (!subTickerToName.ContainsKey(price.SubTicker))
+                        if (!subTickerToName.TryGetValue(price.SubTicker, out var tickerName))
                         {
                             _logger.LogTrace("Unknown ticker: {ticker}", price.SubTicker);
                             continue;
                         }
 
-                        priceUpdates.Add(new PriceUpdateDto(subTickerToName[price.SubTicker], price.Price, price.Timestamp));
+                        priceUpdates.Add(new PriceUpdateMessage(tickerName, price.Price, price.Timestamp));
                     }
 
                     if (priceUpdates.Count != 0)
                         _logger.LogTrace(
                             "Last prices:\n{prices}",
                             string.Join('\n', priceUpdates.Select(p => $"{p.Ticker} : {p.Price} ({p.Timestamp})")));
+
+                    foreach (var priceUpdate in priceUpdates)
+                    {
+                        await _subscriber.PublishAsync(_channel, JsonSerializer.Serialize(priceUpdate));
+                    }
+
                     continue;
                 }
 

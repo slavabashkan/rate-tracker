@@ -18,6 +18,18 @@ public class AppSettingsValidation : IValidateOptions<AppSettings>
                 $"\'{nameof(settings.PriceSourceUrlTemplate)}\' must be provided in configuration");
         }
 
+        if (string.IsNullOrEmpty(settings.RedisConnection))
+        {
+            return ValidateOptionsResult.Fail(
+                $"\'{nameof(settings.RedisConnection)}\' must be provided in configuration");
+        }
+
+        if (string.IsNullOrEmpty(settings.PriceUpdatesChannel))
+        {
+            return ValidateOptionsResult.Fail(
+                $"\'{nameof(settings.PriceUpdatesChannel)}\' must be provided in configuration");
+        }
+
         return ValidateOptionsResult.Success;
     }
 }
