@@ -2,9 +2,9 @@ namespace PriceUpdateHandlerService.Configuration;
 
 public class AppSettings
 {
-    public string TickersStorageFilePath { get; set; }
-    public string PublicSourceWsEndpoint { get; set; }
-    public string PublicSourceAPIKey { get; set; }
-    public string RedisConnection { get; set; }
-    public string PriceUpdatesChannel { get; set; }
+    public required string TickersStorageFilePath { get; init; }
+    public required string PublicSourceWsEndpoint { get; init; }
+    public required string PublicSourceApiKey { get; init; }
+    public required string RedisConnection { get; init; }
+    public required string PriceUpdatesChannel { get; init; }
 }

@@ -18,16 +18,16 @@ public class AppSettingsValidation : IValidateOptions<AppSettings>
                 $"\'{nameof(settings.PublicSourceWsEndpoint)}\' must be provided in configuration");
         }
 
-        if (string.IsNullOrEmpty(settings.PublicSourceAPIKey))
+        if (string.IsNullOrEmpty(settings.PublicSourceApiKey))
         {
             return ValidateOptionsResult.Fail(
-                $"\'{nameof(settings.PublicSourceAPIKey)}\' must be provided in configuration");
+                $"\'{nameof(settings.PublicSourceApiKey)}\' must be provided in configuration");
         }
 
         if (string.IsNullOrEmpty(settings.RedisConnection))
         {
             return ValidateOptionsResult.Fail(
-                $"\'{nameof(settings.PublicSourceAPIKey)}\' must be provided in configuration");
+                $"\'{nameof(settings.PublicSourceApiKey)}\' must be provided in configuration");
         }
 
         if (string.IsNullOrEmpty(settings.PriceUpdatesChannel))

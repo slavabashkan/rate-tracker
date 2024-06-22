@@ -13,7 +13,7 @@ public class FinnhubPriceServiceFactory : IPriceUpdateProviderFactory
     public FinnhubPriceServiceFactory(IOptions<AppSettings> appSettings, ILogger<FinnhubPriceService> logger)
     {
         _endpoint = appSettings.Value.PublicSourceWsEndpoint;
-        _apiKey = appSettings.Value.PublicSourceAPIKey;
+        _apiKey = appSettings.Value.PublicSourceApiKey;
         _logger = logger;
     }
 

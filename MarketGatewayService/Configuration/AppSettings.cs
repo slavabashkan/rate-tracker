@@ -2,8 +2,8 @@ namespace MarketGatewayService.Configuration;
 
 public class AppSettings
 {
-    public string TickersStorageFilePath { get; set; }
-    public string PriceSourceUrlTemplate { get; set; }
-    public string RedisConnection { get; set; }
-    public string PriceUpdatesChannel { get; set; }
+    public required string TickersStorageFilePath { get; init; }
+    public required string PriceSourceUrlTemplate { get; init; }
+    public required string RedisConnection { get; init; }
+    public required string PriceUpdatesChannel { get; init; }
 }
