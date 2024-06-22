@@ -5,10 +5,6 @@ using PriceUpdateHandlerService.Services;
 using StackExchange.Redis;
 
 var host = Host.CreateDefaultBuilder(args)
-    .ConfigureAppConfiguration((_, config) =>
-    {
-        config.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
-    })
     .ConfigureServices((hostContext, services) =>
     {
         services.Configure<AppSettings>(hostContext.Configuration.GetSection("AppSettings"));
