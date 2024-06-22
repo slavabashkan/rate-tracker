@@ -1,7 +1,7 @@
 using Common.Providers;
 using Microsoft.Extensions.Options;
-using PriceUpdateHandlerService;
 using PriceUpdateHandlerService.Configuration;
+using PriceUpdateHandlerService.Services;
 using StackExchange.Redis;
 
 var host = Host.CreateDefaultBuilder(args)
@@ -13,6 +13,7 @@ var host = Host.CreateDefaultBuilder(args)
     {
         services.Configure<AppSettings>(hostContext.Configuration.GetSection("AppSettings"));
         services.AddSingleton<IValidateOptions<AppSettings>, AppSettingsValidation>();
+        services.AddSingleton<IPriceUpdateProviderFactory, FinnhubPriceServiceFactory>();
 
         services.AddSingleton<IConnectionMultiplexer>(sp =>
         {
@@ -26,7 +27,7 @@ var host = Host.CreateDefaultBuilder(args)
             return new TickerFileProvider(appSettings.TickersStorageFilePath);
         });
 
-        services.AddHostedService<Worker>();
+        services.AddHostedService<WebSocketsWorker>();
     })
     .Build();
 
