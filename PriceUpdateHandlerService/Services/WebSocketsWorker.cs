@@ -62,7 +62,14 @@ public class WebSocketsWorker : BackgroundService
 
                 // publish price updates to broker
                 foreach (var broadcastMessage in broadcastMessages)
-                    await _subscriber.PublishAsync(_channel, JsonSerializer.Serialize(broadcastMessage));
+                    try
+                    {
+                        await _subscriber.PublishAsync(_channel, JsonSerializer.Serialize(broadcastMessage));
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.LogWarning(ex, "Failed to publish to message broker");
+                    }
             }
 
             await socket.CloseAsync(WebSocketCloseStatus.NormalClosure, "Closing", CancellationToken.None);

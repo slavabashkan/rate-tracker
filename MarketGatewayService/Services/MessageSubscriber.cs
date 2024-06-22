@@ -24,14 +24,27 @@ public class MessageSubscriber : IHostedService
 
     public async Task StartAsync(CancellationToken cancellationToken)
     {
-        var subscriber = _redis.GetSubscriber();
-        await subscriber.SubscribeAsync(_channel, (_, message) =>
+        var success = false;
+        do
         {
-            if (message.HasValue)
-                ProcessPriceUpdate(message.ToString());
-        });
+            var subscriber = _redis.GetSubscriber();
+            try
+            {
+                await subscriber.SubscribeAsync(_channel, (_, message) =>
+                {
+                    if (message.HasValue)
+                        ProcessPriceUpdate(message.ToString());
+                });
 
-        _logger.LogInformation("Subscribed to price updates");
+                success = true;
+                _logger.LogInformation("Subscribed to price updates");
+            }
+            catch (RedisConnectionException ex)
+            {
+                _logger.LogWarning(ex, "Failed to subscribe to message broker");
+                await Task.Delay(5000, cancellationToken);
+            }
+        } while (!(success || cancellationToken.IsCancellationRequested));
     }
 
     public async Task StopAsync(CancellationToken cancellationToken)

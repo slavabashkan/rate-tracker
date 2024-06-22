@@ -86,10 +86,20 @@ public class WebSocketHandler
         var jsonMessage = JsonSerializer.Serialize(priceUpdate);
         var buffer = Encoding.UTF8.GetBytes(jsonMessage);
 
-        // todo: exception handling
         var tasks = sockets.Keys
             .Where(socket => socket.State == WebSocketState.Open)
-            .Select(socket => socket.SendAsync(new ArraySegment<byte>(buffer, 0, buffer.Length), WebSocketMessageType.Text, true, CancellationToken.None));
+            .Select(async socket =>
+            {
+                try
+                {
+                    if (socket.State == WebSocketState.Open)
+                        await socket.SendAsync(new ArraySegment<byte>(buffer, 0, buffer.Length), WebSocketMessageType.Text, true, CancellationToken.None);
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogWarning(ex, "Failed to send message via WebSockets");
+                }
+            });
 
         await Task.WhenAll(tasks);
     }
