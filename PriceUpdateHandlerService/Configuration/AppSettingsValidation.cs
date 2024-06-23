@@ -2,6 +2,9 @@ using Microsoft.Extensions.Options;
 
 namespace PriceUpdateHandlerService.Configuration;
 
+/// <summary>
+/// Provides validation for the AppSettings configuration.
+/// </summary>
 public class AppSettingsValidation : IValidateOptions<AppSettings>
 {
     public ValidateOptionsResult Validate(string? name, AppSettings settings)

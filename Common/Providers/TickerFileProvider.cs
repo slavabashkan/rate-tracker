@@ -3,10 +3,17 @@ using Common.Models;
 
 namespace Common.Providers;
 
+/// <summary>
+/// Methods to retrieve ticker data from json-file.
+/// </summary>
 public class TickerFileProvider : ITickerProvider
 {
     private readonly IReadOnlyDictionary<string, Ticker> _tickers;
 
+    /// <summary>
+    /// Initializes a new instance of the TickerFileProvider with data from the specified file.
+    /// </summary>
+    /// <param name="sourceFilePath">The path to the json-file containing ticker data.</param>
     public TickerFileProvider(string sourceFilePath)
     {
         if (!File.Exists(sourceFilePath))
@@ -32,9 +39,11 @@ public class TickerFileProvider : ITickerProvider
         }
     }
 
+    /// <inheritdoc/>
     public IReadOnlyCollection<Ticker> GetAll() =>
         _tickers.Values.ToArray();
 
+    /// <inheritdoc/>
     public Ticker? GetTicker(string name) =>
         _tickers.GetValueOrDefault(name);
 }

@@ -5,6 +5,9 @@ using PriceUpdateHandlerService.DTO;
 
 namespace PriceUpdateHandlerService.Services;
 
+/// <summary>
+/// Implementation of service-specific operations for price updates from the Finnhub service.
+/// </summary>
 public class FinnhubPriceService : IPriceUpdateProvider
 {
     private readonly ClientWebSocket _socket;
@@ -20,7 +23,10 @@ public class FinnhubPriceService : IPriceUpdateProvider
         _logger = logger;
     }
 
-    public async Task Connect(CancellationToken cancelToken)
+    /// <summary>
+    /// Established connection with Finnhub via WebSockets.
+    /// </summary>
+    public async Task ConnectAsync(CancellationToken cancelToken)
     {
         var uriBuilder = new UriBuilder(_endpoint)
         {
@@ -30,13 +36,17 @@ public class FinnhubPriceService : IPriceUpdateProvider
         _logger.LogInformation("Connected to {endpoint} at {time}", uriBuilder.Uri.ToString(), DateTimeOffset.Now);
     }
 
-    public async Task Subscribe(IReadOnlyCollection<string> tickers, CancellationToken cancelToken)
+    /// <inheritdoc/>
+    public async Task SubscribeAsync(IReadOnlyCollection<string> tickers, CancellationToken cancelToken)
     {
         foreach (var ticker in tickers)
             await SubscribeToPriceUpdates(ticker, _socket, cancelToken);
     }
 
-    public async Task<IReadOnlyCollection<(string Ticker, decimal Price, long Timestamp)>?> ProcessMessage(string jsonMessage, CancellationToken cancelToken)
+    /// <summary>
+    /// Processes the message from Finnhub and returns price updates, if any.
+    /// </summary>
+    public async Task<IReadOnlyCollection<(string Ticker, decimal Price, long Timestamp)>?> ProcessMessageAsync(string jsonMessage, CancellationToken cancelToken)
     {
         var message = JsonSerializer.Deserialize<FinnhubResponseDto>(jsonMessage);
 
@@ -80,6 +90,9 @@ public class FinnhubPriceService : IPriceUpdateProvider
         _logger.LogTrace("Pong response sent");
     }
 
+    /// <summary>
+    /// Extracts the latest prices for each provided ticker.
+    /// </summary>
     private static IReadOnlyCollection<(string Ticker, decimal Price, long Timestamp)> GetLastTradePrices(FinnhubResponseDto response)
     {
         if (response.data == null || response.data.Count == 0)

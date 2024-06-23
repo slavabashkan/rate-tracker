@@ -4,6 +4,9 @@ using PriceUpdateHandlerService.Configuration;
 
 namespace PriceUpdateHandlerService.Services;
 
+/// <summary>
+/// Factory for creating instances of a Finnhub service-specific provider.
+/// </summary>
 public class FinnhubPriceServiceFactory : IPriceUpdateProviderFactory
 {
     private readonly string _endpoint;

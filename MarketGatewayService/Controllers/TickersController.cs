@@ -3,6 +3,9 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace MarketGatewayService.Controllers;
 
+/// <summary>
+/// REST-controller for retrieving ticker information.
+/// </summary>
 [Route("api/[controller]")]
 public class TickersController : Controller
 {
@@ -13,6 +16,9 @@ public class TickersController : Controller
         _provider = provider;
     }
 
+    /// <summary>
+    /// Retrieves all supported ticker names.
+    /// </summary>
     [HttpGet(nameof(GetAll))]
     public ActionResult<IReadOnlyCollection<string>> GetAll()
     {

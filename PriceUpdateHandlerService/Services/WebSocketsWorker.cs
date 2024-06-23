@@ -9,6 +9,9 @@ using StackExchange.Redis;
 
 namespace PriceUpdateHandlerService.Services;
 
+/// <summary>
+/// Background service that subscribes to price updates via WebSocket and publishes them to a Redis message queue.
+/// </summary>
 public class WebSocketsWorker : BackgroundService
 {
     private readonly ITickerProvider _tickerProvider;
@@ -26,19 +29,23 @@ public class WebSocketsWorker : BackgroundService
         _logger = logger;
     }
 
+    /// <inheritdoc/>
     protected override async Task ExecuteAsync(CancellationToken cancelToken)
     {
         _logger.LogInformation("Worker running at: {time}", DateTimeOffset.Now);
 
         using (var socket = new ClientWebSocket())
         {
+            // obtain the new instance of
             var priceUpdateProvider = _priceProviderFactory.Create(socket);
 
-            await priceUpdateProvider.Connect(cancelToken);
+            // connect to a third-party service that provides live price information updates
+            await priceUpdateProvider.ConnectAsync(cancelToken);
 
+            // subscribe to updates for all supported tickers
             var availableTickers = _tickerProvider.GetAll();
             var subTickerToName = availableTickers.ToDictionary(t => t.SubTicker, t => t.Name);
-            await priceUpdateProvider.Subscribe(availableTickers.Select(t => t.SubTicker).ToArray(), cancelToken);
+            await priceUpdateProvider.SubscribeAsync(availableTickers.Select(t => t.SubTicker).ToArray(), cancelToken);
 
             // WebSockets message loop
             while (!cancelToken.IsCancellationRequested && socket.State == WebSocketState.Open)
@@ -49,11 +56,13 @@ public class WebSocketsWorker : BackgroundService
                 if (jsonMessage == null)
                     continue;
 
-                var priceUpdates = await priceUpdateProvider.ProcessMessage(jsonMessage, cancelToken);
+                // process the message and extract prices, if any
+                var priceUpdates = await priceUpdateProvider.ProcessMessageAsync(jsonMessage, cancelToken);
 
                 if (priceUpdates == null || priceUpdates.Count == 0)
                     continue;
 
+                // build messages for the further propagation
                 var broadcastMessages = GetBroadcastMessages(priceUpdates, subTickerToName);
 
                 _logger.LogTrace(
@@ -77,6 +86,9 @@ public class WebSocketsWorker : BackgroundService
         }
     }
 
+    /// <summary>
+    /// Receives a message from the WebSocket connection and converts it to a string
+    /// </summary>
     private static async Task<string?> ReceiveWebSocketMessageAsync(WebSocket socket, CancellationToken cancelToken)
     {
         var buffer = new ArraySegment<byte>(new byte[1024*2]);
@@ -103,6 +115,9 @@ public class WebSocketsWorker : BackgroundService
         }
     }
 
+    /// <summary>
+    /// Filters out unsupported tickers and converts price update information into messages for the Redis message queue.
+    /// </summary>
     private IReadOnlyCollection<PriceUpdateMessage> GetBroadcastMessages(IReadOnlyCollection<(string Ticker, decimal Price, long Timestamp)> priceUpdates, IReadOnlyDictionary<string, string> subTickerToName)
     {
         var result = new List<PriceUpdateMessage>();

@@ -7,9 +7,16 @@ using MarketGatewayService.DTO;
 
 namespace MarketGatewayService.Services;
 
+/// <summary>
+/// Handles incoming WebSocket connections and subscriptions for price updates.
+/// </summary>
 public class WebSocketHandler
 {
     private readonly ILogger<WebSocketHandler> _logger;
+
+    /// <summary>
+    /// Storage for the connected client subscriptions. Keys: Ticker name. Values: WebSocket client connections.
+    /// </summary>
     private static readonly ConcurrentDictionary<string, ConcurrentDictionary<WebSocket, bool>> Subscriptions = new();
 
     public WebSocketHandler(ITickerProvider tickerProvider, ILogger<WebSocketHandler> logger)
@@ -20,6 +27,9 @@ public class WebSocketHandler
         _logger = logger;
     }
 
+    /// <summary>
+    /// Handles an incoming WebSocket connection.
+    /// </summary>
     public async Task HandleAsync(HttpContext context, WebSocket socket)
     {
         var connectionId = context.Connection.Id;
@@ -29,6 +39,7 @@ public class WebSocketHandler
         WebSocketReceiveResult? result = null;
         try
         {
+            // process incoming WebSocket requests
             do
             {
                 result = await socket.ReceiveAsync(new ArraySegment<byte>(buffer), CancellationToken.None);
@@ -56,6 +67,12 @@ public class WebSocketHandler
         _logger.LogTrace("{connection} :: {ws}", context.Connection.Id, socket.State);
     }
 
+    /// <summary>
+    /// Processes a request message from a WebSocket connection.
+    /// Allowed messages:
+    /// subscribe {ticker_name}
+    /// unsubscribe {ticker_name}
+    /// </summary>
     private void ProcessRequest(string message, string connectionId, WebSocket socket)
     {
         _logger.LogTrace("Request from {connection}: {request}", connectionId, message);
@@ -78,8 +95,12 @@ public class WebSocketHandler
         _logger.LogTrace("{connection} :: request ignored", connectionId);
     }
 
+    /// <summary>
+    /// Broadcasts a price update to all subscribed WebSocket connections.
+    /// </summary>
     public async Task BroadcastUpdate(PriceUpdateBroadcastDto priceUpdate)
     {
+        // get sockets subscribed to the specific ticker
         if (!Subscriptions.TryGetValue(priceUpdate.ticker, out var sockets) || sockets.IsEmpty)
             return;
 

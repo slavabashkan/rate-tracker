@@ -4,6 +4,9 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace MarketGatewayService.Controllers;
 
+/// <summary>
+/// REST-controller for retrieving price data.
+/// </summary>
 [Route("api/[controller]")]
 public class PriceController : Controller
 {
@@ -16,6 +19,10 @@ public class PriceController : Controller
         _logger = logger;
     }
 
+    /// <summary>
+    /// Fetches the price of the specified ticker.
+    /// </summary>
+    /// <param name="ticker">The name of the ticker to fetch the price for.</param>
     [HttpGet("{ticker}")]
     public async Task<ActionResult<PriceResponseDto>> GetPrice(string ticker)
     {

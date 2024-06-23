@@ -7,6 +7,9 @@ using StackExchange.Redis;
 
 namespace MarketGatewayService.Services;
 
+/// <summary>
+/// Service that subscribes to Redis message queue and handles price updates.
+/// </summary>
 public class MessageSubscriber : IHostedService
 {
     private readonly IConnectionMultiplexer _redis;
@@ -22,6 +25,7 @@ public class MessageSubscriber : IHostedService
         _logger = logger;
     }
 
+    /// <inheritdoc/>
     public async Task StartAsync(CancellationToken cancellationToken)
     {
         var success = false;
@@ -30,6 +34,7 @@ public class MessageSubscriber : IHostedService
             var subscriber = _redis.GetSubscriber();
             try
             {
+                // subscribe to Redis message queue for updates handling
                 await subscriber.SubscribeAsync(_channel, (_, message) =>
                 {
                     if (message.HasValue)
@@ -47,6 +52,7 @@ public class MessageSubscriber : IHostedService
         } while (!(success || cancellationToken.IsCancellationRequested));
     }
 
+    /// <inheritdoc/>
     public async Task StopAsync(CancellationToken cancellationToken)
     {
         var subscriber = _redis.GetSubscriber();
@@ -63,6 +69,7 @@ public class MessageSubscriber : IHostedService
         if (message == null)
             return;
 
+        // build the broadcast message and send it via WebSocketHandler to clients
         var broadcastDto = new PriceUpdateBroadcastDto(message.Ticker, message.Price, message.Timestamp);
         await _webSocketHandler.BroadcastUpdate(broadcastDto);
     }
